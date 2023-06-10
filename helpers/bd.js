@@ -1,9 +1,8 @@
-const pool = require("../config/database")
+const Sequelize = require("sequelize")
 
-module.exports = {
-  create: (data, callBack) => {
-    pool.query(
-      `insert into `
-    )
-  }
-}
+const sequelize = new Sequelize ('pweb', 'postgres', 'password', {
+    host: 'localhost',
+    dialect: 'postgres',
+})
+
+module.exports = sequelize
