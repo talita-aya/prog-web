@@ -31,6 +31,7 @@ const UsersModel = sequelize.define('Users', {
 })
 
 module.exports = UsersModel
+
 // module.exports = {
 //   list: async function() {
 //       const users = await UsersModel.findAll()
@@ -54,16 +55,6 @@ module.exports = UsersModel
 //   delete: async function(id) {
 //       //Precisa fazer algo para os livros que este autor possui
 //       return await UsersModel.destroy({where: { id: id }})
-//   },
-
-//   getById: async function(id) {
-//       return await UsersModel.findByPk(id)
-//   },
-
-//   getByName: async function(name) {
-//       return await UsersModel.findOne({where: {name: {
-//           [Op.like]: '%' + name + '%'
-//       } }})
 //   },
 
 //   Model: UsersModel
