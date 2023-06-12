@@ -31,7 +31,7 @@ const getUserID = async (req, res) => {
 };
 
 const postUser = async (req, res) => {
-  const { name, age, email, username, password } = req.body;
+  const { name, age, email, username, password, role } = req.body;
 
   try {
     const existingUser = await userModel.findOne({
@@ -50,6 +50,7 @@ const postUser = async (req, res) => {
       email: email,
       username: username,
       password: password,
+      role: role,
     });
 
     res.status(200).json(newUser);
@@ -76,7 +77,37 @@ const postUserAdmin = async (req, res) => {
       email: "admin@gmail.com",
       username: "admin1",
       password: "admin1",
+      role: "admin"
     });
+    res.status(200).json(newUser);
+  } catch (error) {
+    return res.status(500).json({ mensagem: error.message });
+  }
+};
+
+const postOthersAdmin = async (req, res) => {
+  const { name, age, email, username, password } = req.body;
+
+  try {
+    const existingUser = await userModel.findOne({
+      where: {
+        username,
+      },
+    });
+
+    if (existingUser) {
+      return res.status(404).json({ mensagem: "Username já cadastrado" });
+    }
+
+    const newUser = await userModel.create({
+      name: name,
+      age: age,
+      email: email,
+      username: username,
+      password: password,
+      role: "admin",
+    });
+
     res.status(200).json(newUser);
   } catch (error) {
     return res.status(500).json({ mensagem: error.message });
@@ -94,6 +125,7 @@ const editUser = async (req, res) => {
     putUser.email = email;
     putUser.username = username;
     putUser.password = password;
+    putUser.role = role
 
     await putUser.save(); //salvando no bd
 
@@ -164,5 +196,6 @@ module.exports = {
   editUser,
   deleteUser,
   postUserAdmin,
-  login
+  login,
+  postOthersAdmin
 };

@@ -31,35 +31,12 @@ const UsersModel = sequelize.define('Users', {
     type: DataTypes.STRING,
     allowNull: false,
     required: true
+  },
+  role: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    required: true
   }
 })
 
 module.exports = UsersModel
-
-// module.exports = {
-//   list: async function() {
-//       const users = await UsersModel.findAll()
-//       return users
-//   },
-  
-//   save: async function(name) {
-//       const user = await UsersModel.create({
-//           name: name
-//       })
-      
-//       return user
-//   },
-
-//   update: async function(id, name) {
-//       return await UsersModel.update({name: name}, {
-//           where: { id: id }
-//       })
-//   },
-
-//   delete: async function(id) {
-//       //Precisa fazer algo para os livros que este autor possui
-//       return await UsersModel.destroy({where: { id: id }})
-//   },
-
-//   Model: UsersModel
-// }
