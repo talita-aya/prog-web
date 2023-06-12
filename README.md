@@ -3,7 +3,8 @@
 - npm
 - nodemon
 - express
-- body-parser
+- body-parser (não usado)
 - middlewares
-- mysql
-- dotenv
+- postgres
+- dotenv (não usado)
+- json web token

@@ -1,14 +1,26 @@
-const express = require('express')
+const express = require("express");
 
-var {getUser, getUserID, postUser, editUser, deleteUser, postUserAdmin} = require('../controllers/user_controller')
+var {
+  getUser,
+  getUserID,
+  postUser,
+  editUser,
+  deleteUser,
+  postUserAdmin,
+  login
+} = require("../controllers/user_controller");
 
-const router = express.Router()
+const router = express.Router();
 
-router.get('/', postUserAdmin)
-router.get('/users', getUser)
-router.get('/users/:id', getUserID)
-router.post('/users', postUser)
-router.put('/users/:id', editUser)
-router.delete('/users/:id', deleteUser)
+//CRUD user
+router.get("/", postUserAdmin);
+router.get("/users", getUser);
+router.get("/users/:id", getUserID);
+router.post("/users", postUser);
+router.put("/users/:id", editUser);
+router.delete("/users/:id", deleteUser);
 
-module.exports = router
+//login
+router.post("/login", login);
+
+module.exports = router;

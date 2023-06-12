@@ -3,7 +3,7 @@ const userModel = require("../models/user_model");
 const getUser = async (req, res) => {
   try {
     const userList = await userModel.findAll();
-    res.status(200).json(userList)
+    res.status(200).json(userList);
   } catch (error) {
     return res.status(500).json({ mensagem: error.message });
   }
@@ -50,7 +50,7 @@ const postUser = async (req, res) => {
       password: password,
     });
 
-    res.status(200).json(newUser)
+    res.status(200).json(newUser);
   } catch (error) {
     return res.status(500).json({ mensagem: error.message });
   }
@@ -60,7 +60,7 @@ const postUserAdmin = async (req, res) => {
   try {
     const existingUser = await userModel.findOne({
       where: {
-        username: 'admin1',
+        username: "admin1",
       },
     });
 
@@ -69,13 +69,13 @@ const postUserAdmin = async (req, res) => {
     }
 
     const newUser = await userModel.create({
-      name: 'admin',
-      age: '0',
-      email: 'admin@gmail.com',
-      username: 'admin1',
-      password: 'admin1',
-    })
-    res.status(200).json(newUser)
+      name: "admin",
+      age: "0",
+      email: "admin@gmail.com",
+      username: "admin1",
+      password: "admin1",
+    });
+    res.status(200).json(newUser);
   } catch (error) {
     return res.status(500).json({ mensagem: error.message });
   }
@@ -126,4 +126,33 @@ const deleteUser = async (req, res) => {
   }
 };
 
-module.exports = { getUser, getUserID, postUser, editUser, deleteUser, postUserAdmin };
+const login = async (req, res) => {
+  const { username, password } = req.body;
+
+  try {
+    const existingUser = await userModel.findOne({
+      where: {
+        username,
+        password
+      },
+    });
+
+    if (!existingUser) {
+      return res.status(404).json({ mensagem: "Erro ao tentar fazer login" });
+    }
+
+    res.status(200).json({ mensagem: "Login feito com sucesso" });
+  } catch (error) {
+    return res.status(500).json({ mensagem: error.message });
+  }
+}
+
+module.exports = {
+  getUser,
+  getUserID,
+  postUser,
+  editUser,
+  deleteUser,
+  postUserAdmin,
+  login
+};
