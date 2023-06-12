@@ -50,7 +50,7 @@ const postUser = async (req, res) => {
       email: email,
       username: username,
       password: password,
-      role: role,
+      role: "user",
     });
 
     res.status(200).json(newUser);
@@ -144,13 +144,23 @@ const deleteUser = async (req, res) => {
       },
     });
 
+    const userAdmin = await userModel.findOne({
+      where: {
+        role: "user"
+      },
+    });
+
     if (!existingUser) {
       return res.status(404).json({ mensagem: "Usuário não cadastrado" });
     }
 
+    if (!userAdmin) {
+      return res.status(404).json({ mensagem: "Usuário admin" });
+    }
+
     await userModel.destroy({
       where: {
-        id,
+        id
       },
     });
 

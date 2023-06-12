@@ -17,7 +17,7 @@ const router = express.Router();
 //CRUD user
 router.get("/", postUserAdmin); //criar admin automaticamente
 router.get("/users", getUser); //lista de usuários
-router.get("/users/:id", getUserID); //usuário do ID informado
+router.get("/users/:id", checkLogin, getUserID); //usuário do ID informado
 
 router.post("/users", postUser); //criar usuários
 router.post("/users/admin", checkLogin, postOthersAdmin); //criar mais usuários admin
