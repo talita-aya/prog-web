@@ -1,4 +1,6 @@
 const userModel = require("../models/user_model");
+const jwt = require('jsonwebtoken')
+require('dotenv').config()
 
 const getUser = async (req, res) => {
   try {
@@ -141,7 +143,15 @@ const login = async (req, res) => {
       return res.status(404).json({ mensagem: "Erro ao tentar fazer login" });
     }
 
-    res.status(200).json({ mensagem: "Login feito com sucesso" });
+    const token = jwt.sign({
+      username: username,
+      password: password
+    }, process.env.JWT_KEY, {expiresIn: "1h"})
+
+    res.status(200).json({
+      message: "Login realizado com sucesso",
+      token: token
+    })
   } catch (error) {
     return res.status(500).json({ mensagem: error.message });
   }
