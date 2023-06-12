@@ -2,6 +2,8 @@ const userModel = require("../models/user_model");
 const jwt = require('jsonwebtoken')
 require('dotenv').config()
 
+// -------------------------------------------------------------------------------------------------------
+// listar todos os usuários
 const getUser = async (req, res) => {
   try {
     const userList = await userModel.findAll();
@@ -11,6 +13,9 @@ const getUser = async (req, res) => {
   }
 };
 
+
+// -------------------------------------------------------------------------------------------------------
+// listar usuário pelo ID (rota protegida, precisa do token)
 const getUserID = async (req, res) => {
   try {
     const { id } = req.params;
@@ -30,6 +35,9 @@ const getUserID = async (req, res) => {
   }
 };
 
+
+// -------------------------------------------------------------------------------------------------------
+// criar user (rota protegida, precisa do token)
 const postUser = async (req, res) => {
   const { name, age, email, username, password, role } = req.body;
 
@@ -59,6 +67,9 @@ const postUser = async (req, res) => {
   }
 };
 
+
+// -------------------------------------------------------------------------------------------------------
+// criar o primeiro admin automaticamente
 const postUserAdmin = async (req, res) => {
   try {
     const existingUser = await userModel.findOne({
@@ -85,6 +96,9 @@ const postUserAdmin = async (req, res) => {
   }
 };
 
+
+// -------------------------------------------------------------------------------------------------------
+// criar outros admin (rota protegida, precisa do token e precisa ser admin)
 const postOthersAdmin = async (req, res) => {
   const { name, age, email, username, password } = req.body;
 
@@ -114,6 +128,9 @@ const postOthersAdmin = async (req, res) => {
   }
 };
 
+
+// -------------------------------------------------------------------------------------------------------
+// editar infos do user (rota protegida, precisa do token e precisa ser admin)
 const editUser = async (req, res) => {
   try {
     const { id } = req.params;
@@ -135,32 +152,27 @@ const editUser = async (req, res) => {
   }
 };
 
+
+// -------------------------------------------------------------------------------------------------------
+// deletar um  user (rota protegida, precisa do token e precisa ser admin, não pode excluir outro admin)
 const deleteUser = async (req, res) => {
   try {
     const { id } = req.params;
     const existingUser = await userModel.findOne({
       where: {
         id,
-      },
-    });
-
-    const userAdmin = await userModel.findOne({
-      where: {
         role: "user"
       },
     });
 
     if (!existingUser) {
-      return res.status(404).json({ mensagem: "Usuário não cadastrado" });
-    }
-
-    if (!userAdmin) {
-      return res.status(404).json({ mensagem: "Usuário admin" });
+      return res.status(404).json({ mensagem: "Erro ao excluir, user não existe ou é admin" });
     }
 
     await userModel.destroy({
       where: {
-        id
+        id,
+        role: "user"
       },
     });
 
@@ -170,6 +182,9 @@ const deleteUser = async (req, res) => {
   }
 };
 
+
+// -------------------------------------------------------------------------------------------------------
+// login (gera o token utilizado nas outras funções)
 const login = async (req, res) => {
   const { username, password } = req.body;
 
@@ -199,6 +214,31 @@ const login = async (req, res) => {
   }
 }
 
+
+// -------------------------------------------------------------------------------------------------------
+// checar se é admnistrador para que algumas ações sejam permitidas
+const isAdmin = async (req, res, next) => {
+  const token = req.headers.authorization;
+
+  if (!token) {
+    return res.status(401).json({ mensagem: "Nenhum token informado" });
+  }
+
+  jwt.verify(token, process.env.JWT_KEY, (err, decoded) => {
+    console.log(decoded.username)
+    if (err) {
+      return res.status(401).json({ mensagem: "Token inválido" });
+    }
+
+    if (decoded.role !== "admin") {
+      return res.status(403).json({ mensagem: "Acesso negado, você não é um admin" });
+    }
+
+    next();
+  });
+}
+
+
 module.exports = {
   getUser,
   getUserID,
@@ -207,5 +247,6 @@ module.exports = {
   deleteUser,
   postUserAdmin,
   login,
-  postOthersAdmin
+  postOthersAdmin,
+  isAdmin
 };
