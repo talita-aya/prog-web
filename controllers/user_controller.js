@@ -202,12 +202,11 @@ const login = async (req, res) => {
 
     const token = jwt.sign({
       username: username,
-      password: password
-    }, process.env.JWT_KEY, {expiresIn: "1h"})
+    }, process.env.JWT_KEY, {expiresIn: "190h"})
 
     res.status(200).json({
       message: "Login realizado com sucesso",
-      token: token
+      token: token,
     })
   } catch (error) {
     return res.status(500).json({ mensagem: error.message });
@@ -224,19 +223,24 @@ const isAdmin = async (req, res, next) => {
     return res.status(401).json({ mensagem: "Nenhum token informado" });
   }
 
-  jwt.verify(token, process.env.JWT_KEY, (err, decoded) => {
-    console.log(decoded.username)
+  jwt.verify(token, process.env.JWT_KEY, async (err, decoded) => {
     if (err) {
       return res.status(401).json({ mensagem: "Token inválido" });
     }
 
-    if (decoded.role !== "admin") {
+    const userLogado = await userModel.findOne({
+      where: { username: decoded.username }
+    });
+
+
+    if (userLogado.role !== "admin") {
       return res.status(403).json({ mensagem: "Acesso negado, você não é um admin" });
     }
 
     next();
   });
-}
+};
+
 
 
 module.exports = {

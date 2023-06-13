@@ -23,9 +23,9 @@ router.get("/users/:id", checkLogin, getUserID); //listar usuário pelo ID (rota
 router.post("/users", checkLogin, postUser); //criar user (rota protegida, precisa do token)
 router.post("/users/admin", checkLogin, isAdmin, postOthersAdmin); //criar outros admin (rota protegida, precisa do token e precisa ser admin)
 
-router.put("/users/:id", checkLogin, editUser); //editar infos do user (rota protegida, precisa do token e precisa ser admin)
+router.put("/users/:id", checkLogin, isAdmin, editUser); //editar infos do user (rota protegida, precisa do token e precisa ser admin)
 
-router.delete("/users/:id", checkLogin, deleteUser); //deletar um  user (rota protegida, precisa do token e precisa ser admin, não pode excluir outro admin)
+router.delete("/users/:id", checkLogin, isAdmin, deleteUser); //deletar um  user (rota protegida, precisa do token e precisa ser admin, não pode excluir outro admin)
 
 
 //login
