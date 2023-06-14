@@ -10,7 +10,8 @@ var {
   postUserAdmin,
   login,
   postOthersAdmin,
-  isAdmin
+  isAdmin,
+  editMe
 } = require("../controllers/user_controller");
 
 const router = express.Router();
@@ -24,6 +25,7 @@ router.post("/users", checkLogin, postUser); //criar user (rota protegida, preci
 router.post("/users/admin", checkLogin, isAdmin, postOthersAdmin); //criar outros admin (rota protegida, precisa do token e precisa ser admin)
 
 router.put("/users/:id", checkLogin, isAdmin, editUser); //editar infos do user (rota protegida, precisa do token e precisa ser admin)
+router.put("/users/edit/:username", checkLogin, editMe); //editar infos do próprio user (rota protegida, precisa do token e não pode alterar infos de outra pessoa)
 
 router.delete("/users/:id", checkLogin, isAdmin, deleteUser); //deletar um  user (rota protegida, precisa do token e precisa ser admin, não pode excluir outro admin)
 
