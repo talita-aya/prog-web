@@ -19,7 +19,7 @@ const router = express.Router();
 //CRUD user
 router.get("/", postUserAdmin); //criar o primeiro admin automaticamente
 router.get("/users", checkLogin, isAdmin, getUser); //listar todos os usuários (rota protegida, precisa do token e precisa ser admin)
-router.get("/users/:id", checkLogin, getUserID); //listar usuário pelo ID (rota protegida, precisa do token)
+router.get("/users/:id", checkLogin, isAdmin, getUserID); //listar usuário pelo ID (rota protegida, precisa do token e precisa ser admin)
 
 router.post("/users", checkLogin, postUser); //criar user (rota protegida, precisa do token)
 router.post("/users/admin", checkLogin, isAdmin, postOthersAdmin); //criar outros admin (rota protegida, precisa do token e precisa ser admin)
