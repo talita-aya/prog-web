@@ -5,9 +5,24 @@ require("dotenv").config();
 // -------------------------------------------------------------------------------------------------------
 // listar todos os usuários
 const getUser = async (req, res) => {
+  const page = parseInt(req.query.page) || 1 //página atual (padrão: 1)
+  const limit = parseInt(req.query.limit) || 10 //número de registros por página (padrão: 10)
+  const offset = (page - 1) * limit; //deslocamento para a página atual
+
   try {
-    const userList = await userModel.findAll();
-    res.status(200).json(userList);
+    const { count, rows } = await userModel.findAndCountAll({
+      offset,
+      limit,
+    });
+
+    res.status(200).json({
+      count,
+      totalPages: Math.ceil(count / limit),
+      currentPage: page,
+      users: rows,
+    });
+    //http://localhost:3000/users?page=2&limit=5
+    //retorna página 2 com 5 usuários por página (a partir do décimo usuário da lista geral)
   } catch (error) {
     return res.status(500).json({ mensagem: error.message });
   }
