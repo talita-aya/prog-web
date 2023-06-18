@@ -1,6 +1,7 @@
-const userModel = require("../models/user_model");
-const jwt = require("jsonwebtoken");
-require("dotenv").config();
+const userModel = require("../models/user_model")
+const jwt = require("jsonwebtoken")
+const sequelize = require('../helpers/bd')
+require("dotenv").config()
 
 // -------------------------------------------------------------------------------------------------------
 // listar todos os usuários
@@ -81,6 +82,27 @@ const postUser = async (req, res) => {
 };
 
 // -------------------------------------------------------------------------------------------------------
+// criar 5 users na rota install
+const post5Users = async (req, res, next) => {
+  try {
+    await sequelize.sync({ force: true }); // cria a tabela no bd
+    await userModel.bulkCreate([
+      { name: "Fulano 2", age: 2, email: "fulano2@gmail.com", username: "fulano1", password: "fulano1", role: "user" },
+      { name: "Fulano 3", age: 3, email: "fulano3@gmail.com", username: "fulano2", password: "fulano2", role: "user" },
+      { name: "Fulano 1", age: 1, email: "fulano1@gmail.com", username: "fulano3", password: "fulano3", role: "user" },
+      { name: "Fulano 4", age: 4, email: "fulano4@gmail.com", username: "fulano4", password: "fulano4", role: "user" },
+      { name: "Fulano 5", age: 5, email: "fulano5@gmail.com", username: "fulano5", password: "fulano5", role: "user" },
+    ]);
+
+    //res.status(200).json({ mensagem: "Instalação do banco de dados concluída + 5 usuários adicionados" });
+    next(); // Encaminha para a próxima rota
+  } catch (error) {
+    res.status(500).json({ mensagem: error.message });
+  }
+};
+
+
+// -------------------------------------------------------------------------------------------------------
 // criar o primeiro admin automaticamente
 const postUserAdmin = async (req, res) => {
   try {
@@ -95,14 +117,14 @@ const postUserAdmin = async (req, res) => {
     }
 
     const newUser = await userModel.create({
-      name: "admin",
+      name: "admin1",
       age: "0",
       email: "admin@gmail.com",
       username: "admin1",
       password: "admin1",
       role: "admin",
     });
-    res.status(200).json(newUser);
+    res.status(200).json(newUser)
   } catch (error) {
     return res.status(500).json({ mensagem: error.message });
   }
@@ -312,4 +334,5 @@ module.exports = {
   postOthersAdmin,
   isAdmin,
   editMe,
+  post5Users
 };

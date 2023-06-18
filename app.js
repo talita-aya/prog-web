@@ -1,6 +1,5 @@
 const express = require('express')
 var userRoutes = require('./routes/user_routes')
-const userModel = require('./models/user_model')
 
 const app = express()
 

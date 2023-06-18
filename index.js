@@ -2,7 +2,6 @@ const express = require("express")
 const app = require('./app')
 const sequelize = require('./helpers/bd')
 
-
 //documentação sequelize
 async function main (){
   try {
@@ -13,4 +12,5 @@ async function main (){
     console.error('Não foi possível se conectar ao banco de dados', error);
   }
 }
+
 main()
