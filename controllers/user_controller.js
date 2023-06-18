@@ -51,6 +51,27 @@ const getUserID = async (req, res) => {
 };
 
 // -------------------------------------------------------------------------------------------------------
+// listar usuário e idade (rota protegida, precisa do token)
+const getNameAge = async (req, res) => {
+  try {
+    const users = await userModel.findAll();
+
+    const processamentoDados = users.map(user => {
+      const age = parseInt(user.age)
+      const fullName = `${user.name} (${age} anos)`;
+      return {
+        fullName,
+        email: user.email,
+      };
+    });
+
+    res.status(200).json(processamentoDados);
+  } catch (error) {
+    res.status(500).json({ mensagem: error.message });
+  }
+};
+
+// -------------------------------------------------------------------------------------------------------
 // criar user (rota protegida, precisa do token)
 const postUser = async (req, res) => {
   const { name, age, email, username, password, role } = req.body;
@@ -362,5 +383,6 @@ module.exports = {
   isAdmin,
   editMe,
   post5Users,
-  updateAge
+  updateAge,
+  getNameAge
 };

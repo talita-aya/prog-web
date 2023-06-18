@@ -13,7 +13,8 @@ var {
   isAdmin,
   editMe,
   post5Users,
-  updateAge
+  updateAge,
+  getNameAge
 } = require("../controllers/user_controller");
 
 const router = express.Router();
@@ -22,6 +23,7 @@ const router = express.Router();
 router.get("/install", post5Users, postUserAdmin, ); //criar o primeiro admin automaticamente
 router.get("/users", checkLogin, isAdmin, getUser); //listar todos os usuários (rota protegida, precisa do token e precisa ser admin)
 router.get("/users/:id", checkLogin, isAdmin, getUserID); //listar usuário pelo ID (rota protegida, precisa do token e precisa ser admin)
+router.get("/nome-idade", checkLogin, getNameAge); //listar usuário e idade (rota protegida, precisa do token e precisa ser admin)
 
 router.post("/users", checkLogin, postUser); //criar user (rota protegida, precisa do token)
 router.post("/users/admin", checkLogin, isAdmin, postOthersAdmin); //criar outros admin (rota protegida, precisa do token e precisa ser admin)
