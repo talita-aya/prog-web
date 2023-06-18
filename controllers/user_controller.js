@@ -162,6 +162,33 @@ const postOthersAdmin = async (req, res) => {
 };
 
 // -------------------------------------------------------------------------------------------------------
+// criar outros admin (rota protegida, precisa do token e precisa ser admin)
+const updateAge = async (req, res) => {
+  try {
+    const { username } = req.body
+
+    const existingUser = await userModel.findOne({
+      where: {
+        username: username,
+      },
+    });
+
+    if (!existingUser) {
+      return res.status(404).json({ mensagem: "Usuário não encontrado" });
+    }
+
+    existingUser.age += 1;
+    existingUser.lastLogin = new Date();
+
+    await existingUser.save();
+
+    res.status(200).json(existingUser);
+  } catch (error) {
+    res.status(500).json({ mensagem: error.message });
+  }
+}
+
+// -------------------------------------------------------------------------------------------------------
 // editar infos do user (rota protegida, precisa do token e precisa ser admin)
 const editUser = async (req, res) => {
   try {
@@ -334,5 +361,6 @@ module.exports = {
   postOthersAdmin,
   isAdmin,
   editMe,
-  post5Users
+  post5Users,
+  updateAge
 };
