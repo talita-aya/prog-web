@@ -11,61 +11,92 @@ Este projeto foi desenvolvido como avaliação para a disciplina de Programaçã
 ## 📥 Inicialização
 
 1. Clonar o código para seu próprio computador
- `git clone [link do repositório]`
+  ```
+  git clone [link do repositório]
+  ```
  
 2. Dentro da pasta do projeto, instalar todas as dependências
-	`npm i ` ou `npm install`
+  ```
+  npm i
+  //npm install
+  ```
 	
 3. Criar um documento *.env* para armazenar variáveis
-	`DB_DIALECT=postgres`
-	`DB_HOST=localhost`
-	`DB_NAME=[name here]`
-	`DB_PORT=[port here]`
-	`DB_USER=[user here]`
-	`DB_PASSWORD=[password here]`
-	`JWT_KEY="[key here]"`
+  ```
+  DB_DIALECT=postgres
+  DB_HOST=localhost
+    DB_NAME=[name here]
+    DB_PORT=[port here]
+    DB_USER=[user here]
+    DB_PASSWORD=[password here]
+    JWT_KEY="[key here]"
+  ```
 
 4. Inicializar o projeto
-	`npm start`
+	```
+  npm start
+  ```
 
 <br/>
 
 ## 🗺️ Rotas
 
 1. Criar a tabela no banco de dados, o primeiro administrador e 5 usuários comuns
-`GET /install`
+  ``` 
+  GET /install
+  ```
 
 2. Listar todos os usuários cadastrados (rota protegida, necessário inserir o token e somente para administradores)
-`GET /users`
+  ```
+  GET /users
+  ```
 
 3. Listar usuário pelo ID (rota protegida, necessário inserir o token e somente para administradores)
-`GET /users/:id`
+  ```
+  GET /users/:id
+  ```
 
 4. Listar usuários, sendo visível somente nome, idade e e-mail cadastrado (rota protegida, necessário inserir o token)
-`GET /nome-idade`
+  ```
+  GET /nome-idade
+  ```
 
 5. Criar usuário comum (rota protegida, necessário inserir o token)
-`POST /users`
+  ```
+  POST /users
+  ```
 
 6. Criar administradores (rota protegida, necessário inserir o token e somente para administradores)
-`POST /users/admin`
+  ```
+  POST /users/admin
+  ```
 
 7. Login 
-`POST /login`
+  ```
+  POST /login
+  ```
 
 8. Atualizar idade (rota protegida, necessário inserir o token e somente para administradores)
-`POST /users/age`
+  ```
+  POST /users/age
+  ```
 
 9. Editar informações do usuário (rota protegida, necessário inserir o token e somente para administradores)
-`PUT /users/:id`
+  ```
+  PUT /users/:id
+  ```
 	> **id** é o identificador do usuário que se deseja editar os dados
 
 10. Editar próprias informações (rota protegida, necessário inserir o token e não é possível um usuário comum alterar informações de outro usuário)
-`PUT /users/edit/:username`
+  ```
+  PUT /users/edit/:username
+  ```
 	> **username** é o usuário que se deseja editar os dados
 
 11. Deletar um usuário comum (rota protegida, necessário inserir o token, somente para administradores e não é possível excluir administradores)
-`DELETE /users/:id`
+  ```
+  DELETE /users/:id
+  ```
 
 <br/>
 
