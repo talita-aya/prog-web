@@ -20,7 +20,7 @@ var {
 const router = express.Router();
 
 //CRUD user
-router.get("/install", post5Users, postUserAdmin, ); //criar o primeiro admin automaticamente + 5 usuários
+router.get("/install", post5Users, postUserAdmin); //criar o primeiro admin automaticamente + 5 usuários
 router.get("/users", checkLogin, isAdmin, getUser); //listar todos os usuários (rota protegida, precisa do token e precisa ser admin)
 router.get("/users/:id", checkLogin, isAdmin, getUserID); //listar usuário pelo ID (rota protegida, precisa do token e precisa ser admin)
 router.get("/nome-idade", checkLogin, getNameAge); //listar usuário e idade (rota protegida, precisa do token)
