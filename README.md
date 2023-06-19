@@ -8,3 +8,4 @@
 - postgres
 - dotenv (não usado)
 - json web token
+- bcrypt

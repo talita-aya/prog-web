@@ -2,6 +2,7 @@ const userModel = require("../models/user_model")
 const jwt = require("jsonwebtoken")
 const sequelize = require('../helpers/bd')
 require("dotenv").config()
+const bcrypt = require('bcrypt')
 
 // -------------------------------------------------------------------------------------------------------
 // listar todos os usuários
@@ -87,40 +88,55 @@ const postUser = async (req, res) => {
       return res.status(404).json({ mensagem: "Username já cadastrado" });
     }
 
-    const newUser = await userModel.create({
-      name: name,
-      age: age,
-      email: email,
-      username: username,
-      password: password,
-      role: "user",
-    });
-
-    res.status(200).json(newUser);
+    bcrypt.hash(password, 10, async (err, hash) => {
+      if(err) {
+        return res.status(500).json({ mensagem: err })
+      }
+      else {
+        const newUser = await userModel.create({
+          name: name,
+          age: age,
+          email: email,
+          username: username,
+          password: hash,
+          role: "user",
+        });
+    
+        res.status(200).json(newUser);
+      }
+    })
   } catch (error) {
     return res.status(500).json({ mensagem: error.message });
   }
-};
+}
 
 // -------------------------------------------------------------------------------------------------------
 // criar 5 users na rota install
 const post5Users = async (req, res, next) => {
   try {
-    await sequelize.sync({ force: true }); // cria a tabela no bd
-    await userModel.bulkCreate([
+    await sequelize.sync({ force: true }); //cria a tabela no bd
+    const users = [
       { name: "Fulano 2", age: 2, email: "fulano2@gmail.com", username: "fulano1", password: "fulano1", role: "user" },
       { name: "Fulano 3", age: 3, email: "fulano3@gmail.com", username: "fulano2", password: "fulano2", role: "user" },
       { name: "Fulano 1", age: 1, email: "fulano1@gmail.com", username: "fulano3", password: "fulano3", role: "user" },
       { name: "Fulano 4", age: 4, email: "fulano4@gmail.com", username: "fulano4", password: "fulano4", role: "user" },
       { name: "Fulano 5", age: 5, email: "fulano5@gmail.com", username: "fulano5", password: "fulano5", role: "user" },
-    ]);
+    ];
 
-    //res.status(200).json({ mensagem: "Instalação do banco de dados concluída + 5 usuários adicionados" });
-    next(); // Encaminha para a próxima rota
+    const hashedUsers = await Promise.all(
+      users.map(async (user) => {
+        const hashedPassword = await bcrypt.hash(user.password, 10)
+        return { ...user, password: hashedPassword }
+      })
+    );
+
+    await userModel.bulkCreate(hashedUsers)
+
+    next(); //encaminha para a próxima rota
   } catch (error) {
-    res.status(500).json({ mensagem: error.message });
+    res.status(500).json({ mensagem: error.message })
   }
-};
+}
 
 
 // -------------------------------------------------------------------------------------------------------
@@ -134,22 +150,26 @@ const postUserAdmin = async (req, res) => {
     });
 
     if (existingUser) {
-      return res.status(404).json({ mensagem: "Username já cadastrado" });
+      return res.status(404).json({ mensagem: "Username já cadastrado" })
     }
+
+    const password = "admin1"; //senha original
+    const hashedPassword = await bcrypt.hash(password, 10) //gera o hash da senha
 
     const newUser = await userModel.create({
       name: "admin1",
       age: "0",
       email: "admin@gmail.com",
       username: "admin1",
-      password: "admin1",
+      password: hashedPassword, //usa o hash da senha
       role: "admin",
     });
+
     res.status(200).json(newUser)
   } catch (error) {
-    return res.status(500).json({ mensagem: error.message });
+    return res.status(500).json({ mensagem: error.message })
   }
-};
+}
 
 // -------------------------------------------------------------------------------------------------------
 // criar outros admin (rota protegida, precisa do token e precisa ser admin)
@@ -167,20 +187,22 @@ const postOthersAdmin = async (req, res) => {
       return res.status(404).json({ mensagem: "Username já cadastrado" });
     }
 
+    const hashedPassword = await bcrypt.hash(password, 10); //gerar o hash da senha
+
     const newUser = await userModel.create({
       name: name,
       age: age,
       email: email,
       username: username,
-      password: password,
+      password: hashedPassword, //usa o hash da senha
       role: "admin",
     });
 
     res.status(200).json(newUser);
   } catch (error) {
-    return res.status(500).json({ mensagem: error.message });
+    return res.status(500).json({ mensagem: error.message })
   }
-};
+}
 
 // -------------------------------------------------------------------------------------------------------
 // criar outros admin (rota protegida, precisa do token e precisa ser admin)
@@ -217,12 +239,21 @@ const editUser = async (req, res) => {
     const { name, age, email, username, password, role } = req.body;
 
     const putUser = await userModel.findByPk(id);
+
+    if (!putUser) {
+      return res.status(404).json({ mensagem: "Usuário não encontrado" });
+    }
+
     putUser.name = name;
     putUser.age = age;
     putUser.email = email;
     putUser.username = username;
-    putUser.password = password;
     putUser.role = role;
+
+    if (password) {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      putUser.password = hashedPassword;
+    }
 
     await putUser.save(); //salvando no bd
 
@@ -231,6 +262,7 @@ const editUser = async (req, res) => {
     return res.status(500).json({ mensagem: error.message });
   }
 };
+
 
 // -------------------------------------------------------------------------------------------------------
 // editar infos do próprio user (rota protegida, precisa do token e não pode alterar infos de outra pessoa)
@@ -253,7 +285,7 @@ const editMe = async (req, res) => {
         where: { username: decoded.username },
       });
 
-      if (userLogado.username !== username) { //se o username da pessoa logada é o mesmo de quem ele deseja alterar os dados
+      if (userLogado.username !== username) {
         return res
           .status(403)
           .json({
@@ -261,13 +293,23 @@ const editMe = async (req, res) => {
               "Acesso negado, você não pode alterar dados de outro usuário",
           });
       }
+
       const putUser = await userModel.findOne({
-        where: {username}
+        where: { username },
       });
+
+      if (!putUser) {
+        return res.status(404).json({ mensagem: "Usuário não encontrado" });
+      }
+
       putUser.name = name;
       putUser.age = age;
       putUser.email = email;
-      putUser.password = password;
+      
+      if (password) {
+        const hashedPassword = await bcrypt.hash(password, 10);
+        putUser.password = hashedPassword;
+      }
 
       await putUser.save(); //salvando no bd
 
@@ -317,8 +359,7 @@ const login = async (req, res) => {
   try {
     const existingUser = await userModel.findOne({
       where: {
-        username,
-        password,
+        username
       },
     });
 
@@ -326,9 +367,15 @@ const login = async (req, res) => {
       return res.status(404).json({ mensagem: "Erro ao tentar fazer login" });
     }
 
+    const passwordMatch = await bcrypt.compare(password, existingUser.password);
+
+    if (!passwordMatch) {
+      return res.status(401).json({ mensagem: "Erro ao tentar fazer login" });
+    }
+
     const token = jwt.sign(
       {
-        username: username,
+        username: existingUser.username,
       },
       process.env.JWT_KEY,
       { expiresIn: "190h" }
