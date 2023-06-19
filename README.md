@@ -4,13 +4,13 @@ Este projeto foi desenvolvido como avaliação para a disciplina de Programaçã
 
   
 
-1. [Inicialização](#inicializacaoo)
+1. Inicialização
 
-2. [Rotas](#rotas)
+2. Rotas
 
-3. [Tecnologias e pacotes utilizados](#tecnologias-e-pacotes-utilizados)
+3. Tecnologias e pacotes utilizados
 
-4. [Requisitos](#requisitos)
+4. Requisitos 
 
   
 
@@ -18,7 +18,7 @@ Este projeto foi desenvolvido como avaliação para a disciplina de Programaçã
 
   
 
-## 📥 Inicialização {#inicializacao}
+## 📥 Inicialização
 
   
 
@@ -76,7 +76,7 @@ npm start
 
   
 
-## 🗺️ Rotas {#rotas}
+## 🗺️ Rotas
 
   
 
@@ -198,7 +198,7 @@ DELETE /users/:id
 
   
 
-## 💻 Tecnologias e pacotes utilizados {#tecnologias-e-pacotes-utilizados}
+## 💻 Tecnologias e pacotes utilizados 
 
 Para o desenvolvimento de algumas funcionalidades foram utilizadas tecnologias citadas durante as aulas da disciplina, sendo elas:
 
@@ -224,7 +224,7 @@ Para o desenvolvimento de algumas funcionalidades foram utilizadas tecnologias c
 
   
 
-## 📃 Requisitos {#requisitos}
+## 📃 Requisitos
 
 O projeto se trata da construção de uma API web back-end que atende aos seguintes requisitos:
 
