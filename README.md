@@ -90,13 +90,15 @@ GET /install
 
   
 
-2. Listar todos os usuários cadastrados (rota protegida, necessário inserir o token e somente para administradores)
+2. Listar todos os usuários cadastrados + paginação (rota protegida, necessário inserir o token e somente para administradores)
 
 ```
 
-GET /users
+GET /users?page=1&limit=50
 
 ```
+> *Page* é a página desejada e *limit* a quantidade de usuários por página
+
 
   
 
